@@ -227,6 +227,22 @@ class LinkedBST(AbstractCollection):
                 probe = probe.right
         return None
 
+    def rebalance(self):
+        '''
+        Rebalances the tree.
+        :return:
+        '''
+        values = [i for i in self.inorder()]
+        self.clear()
+
+        def mid_val(val_list):
+            if len(val_list) == 0:
+                return
+            self.add(val_list.pop(len(val_list) // 2))
+            return mid_val(val_list[:len(val_list) // 2]), mid_val(val_list[len(val_list) // 2:])
+
+        return mid_val(values)
+
     def demo_bst(self, path):
         """
         Demonstration of efficiency binary search tree for the search tasks.
@@ -236,12 +252,37 @@ class LinkedBST(AbstractCollection):
         :rtype:
         """
         words = []
+        random_words = []
         with open(path, 'r', encoding='utf-8') as file:
             for word in file:
                 words.append(word)
+        words = random.sample(words, 900)
+        for i in range(10000):
+            random_words.append(random.choice(words))
+        for j in words:
+            self.add(j)
         start_time = time.time()
+        for i in random_words:
+            words.index(i)
+        print("sorted list's time is %s seconds" % (time.time() - start_time))
+        start_time = time.time()
+        for i in random_words:
+            self.find(i)
+        print("sorted binary tree's time is %s seconds" % (time.time() - start_time))
+        self.clear()
+        random.shuffle(words)
+        for j in words:
+            self.add(j)
+        start_time = time.time()
+        for i in random_words:
+            self.find(i)
+        print("unsorted binary tree's time is %s seconds" % (time.time() - start_time))
+        self.rebalance()
+        start_time = time.time()
+        for i in random_words:
+            self.find(i)
+        print("unsorted balanced binary tree's time is %s seconds" % (time.time() - start_time))
 
-        print("--- %s seconds ---" % (time.time() - start_time))
 
 
 if __name__ == '__main__':
